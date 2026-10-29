@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vitality Now | jQuery Wellness Tools</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<style>
+:root {
+    --forest: #1b3823;
+    --leaf: #2c5e3b;
+    --sprout: #4ca165;
+    --mint: #e8f5e9;
+    --clay: #b8561f;
+    --ink: #1f2a22;
+    --line: #c5dcc9;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: Georgia, Garamond, serif; }
+body { background: var(--mint); color: var(--ink); }
+header { background: linear-gradient(var(--forest), var(--leaf)); padding: 22px 40px 0; }
+.logo { color: #fff; font-size: 1.9rem; font-weight: bold; letter-spacing: 5px; }
+.tagline { color: #d9ead3; font-style: italic; margin: 4px 0 18px; }
+.tabs { display: flex; flex-wrap: wrap; gap: 4px; }
+.tabs button { background: transparent; color: #fff; border: 0; padding: 12px 20px; font-size: 1rem; font-weight: bold; cursor: pointer; border-radius: 6px 6px 0 0; }
+.tabs button:hover { background: var(--sprout); }
+.tabs button.active { background: var(--mint); color: var(--forest); }
+button:focus-visible, input:focus-visible { outline: 3px solid var(--clay); outline-offset: 2px; }
+main { max-width: 920px; margin: 32px auto; padding: 0 16px; }
+.panel { display: none; background: #fff; border-radius: 12px; box-shadow: 0 0 10px rgba(0,0,0,.15); padding: 30px; }
+.panel h2 { color: var(--leaf); margin-bottom: 6px; letter-spacing: 1px; }
+.panel .lead { margin-bottom: 22px; color: #4a5a4e; }
+label { display: block; font-weight: bold; margin: 12px 0 5px; }
+input[type=text], input[type=number] { width: 100%; max-width: 260px; padding: 9px; border: 1px solid #9db8a2; border-radius: 6px; font-size: 1rem; }
+input[readonly] { background: var(--mint); }
+.btn { margin-top: 16px; padding: 11px 24px; background: var(--leaf); color: #fff; border: 0; border-radius: 6px; font-size: 1rem; cursor: pointer; transition: background .2s; }
+.btn:hover { background: var(--sprout); }
+.btn:active { transform: translateY(1px); }
+.btn.alt { background: #fff; color: var(--leaf); border: 2px solid var(--leaf); margin-right: 8px; }
+.btn.alt:hover { background: var(--mint); }
+#box { background: var(--leaf); color: #fff; max-width: 300px; margin-top: 18px; padding: 10px 14px; border-radius: 6px; display: none; }
+.percent-row { align-items: end; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px 18px; }
+.percent-row input { max-width: 100%; }
+.error { color: #a12b1a; font-weight: bold; margin-top: 12px; min-height: 1.2em; }
+.shares { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 22px; }
+.share { flex: 1 1 130px; padding: 18px 12px; color: #fff; text-align: center; border-radius: 8px; display: none; }
+.share b { display: block; font-size: 1.35rem; margin-top: 6px; }
+.s1 { background: #1f4e8c; } .s2 { background: #2c7a3f; } .s3 { background: #a12b1a; } .s4 { background: #7a3a8c; }
+.menu { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; margin-bottom: 22px; }
+.item { text-align: center; font-size: .92rem; }
+.swatch { height: 90px; border-radius: 10px; margin-bottom: 8px; }
+.order-row { display: grid; grid-template-columns: 1fr 100px; align-items: center; gap: 12px; max-width: 460px; }
+.order-row label { margin: 6px 0; }
+.order-row input { max-width: 100%; }
+.bill { margin-top: 24px; border-top: 2px solid var(--leaf); padding-top: 14px; display: none; }
+.bill h3 { color: var(--leaf); }
+.bill table { border-collapse: collapse; margin: 10px 0; width: 100%; max-width: 460px; }
+.bill td, .bill th { padding: 6px 10px; border-bottom: 1px solid var(--line); text-align: left; }
+.bill td:last-child, .bill th:last-child { text-align: right; }
+.total { display: inline-block; background: var(--leaf); color: #fff; padding: 6px 14px; font-weight: bold; }
+.total + span { color: #a12b1a; font-weight: bold; font-size: 1.3rem; margin-left: 10px; }
+.garage { height: 230px; background: linear-gradient(#cfe8d3 70%, #8a9a8d 70%); border-radius: 10px; position: relative; overflow: hidden; margin-bottom: 18px; }
+#car { position: absolute; left: 50%; bottom: 30px; width: 300px; height: 130px; transform: translateX(-50%); }
+#cabin { position: absolute; left: 80px; top: 0; width: 130px; height: 52px; background: #e07a3f; clip-path: polygon(14% 0, 86% 0, 100% 100%, 0 100%); }
+#glass { position: absolute; left: 98px; top: 7px; width: 94px; height: 40px; background: rgba(190,230,255,.85); clip-path: polygon(14% 0, 86% 0, 100% 100%, 0 100%); }
+#body { position: absolute; left: 0; top: 50px; width: 300px; height: 52px; background: #e07a3f; border-radius: 10px; }
+.tyre { position: absolute; bottom: 0; background: #15213f; border-radius: 50%; border: 5px solid #0a0f1f; width: 54px; height: 54px; }
+.tyre::after { content: ""; position: absolute; inset: 35%; background: #aab; border-radius: 50%; }
+#t-front { right: 36px; } #t-back { left: 36px; }
+.swatches button { width: 34px; height: 34px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1px #888; cursor: pointer; margin-right: 6px; }
+footer { text-align: center; padding: 24px; color: #4a5a4e; font-size: .9rem; }
+@media (max-width: 600px) {
+    header { padding: 18px 16px 0; }
+    .logo { font-size: 1.4rem; letter-spacing: 3px; }
+    .tabs button { padding: 10px 12px; font-size: .9rem; }
+    .panel { padding: 20px 16px; }
+    #car { transform: translateX(-50%) scale(.8); transform-origin: bottom center; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<header>
+    <div class="logo">VITALITY NOW</div>
+    <div class="tagline">Health &amp; Wellness Blog &mdash; jQuery Toolkit</div>
+    <nav class="tabs" aria-label="Tools">
+        <button class="active" data-tab="adder">Calorie Adder</button>
+        <button data-tab="budget">Wellness Budget</button>
+        <button data-tab="order">Meal Order</button>
+        <button data-tab="van">Van Workshop</button>
+    </nav>
+</header>
+<main>
+
+<section class="panel" id="adder" style="display:block">
+    <h2>Calorie Adder</h2>
+    <p class="lead">Add the calories from two meals. Reads inputs with .val() and writes with .html().</p>
+    <label for="t1">Meal 1 (kcal)</label><input type="text" id="t1">
+    <label for="t2">Meal 2 (kcal)</label><input type="text" id="t2">
+    <button class="btn" id="btn">Addition</button>
+    <label for="result">Total (kcal)</label><input type="text" id="result" readonly>
+    <div id="box"></div>
+    <p class="error" id="addErr" role="alert"></p>
+</section>
+
+<section class="panel" id="budget">
+    <h2>Wellness Budget Calculator</h2>
+    <p class="lead">Split a monthly wellness budget across four needs. The percentages must add up to 100.</p>
+    <label for="amount">Enter the amount you want to manage (Rs.)</label>
+    <input type="number" id="amount" value="15000" min="0">
+    <p style="margin-top:18px"><b>How would you like to divide your money?</b></p>
+    <div class="percent-row">
+        <div><label for="p1">Gym &amp; Classes (%)</label><input type="number" id="p1" value="50" min="0"></div>
+        <div><label for="p2">Nutrition (%)</label><input type="number" id="p2" value="20" min="0"></div>
+        <div><label for="p3">Medical Emergency (%)</label><input type="number" id="p3" value="20" min="0"></div>
+        <div><label for="p4">Savings (%)</label><input type="number" id="p4" value="10" min="0"></div>
+    </div>
+    <button class="btn" id="evaluate">Evaluate My Money</button>
+    <p class="error" id="budgetErr" role="alert"></p>
+    <div class="shares">
+        <div class="share s1">Gym &amp; Classes<b id="v1"></b></div>
+        <div class="share s2">Nutrition<b id="v2"></b></div>
+        <div class="share s3">Medical Emergency<b id="v3"></b></div>
+        <div class="share s4">Savings<b id="v4"></b></div>
+    </div>
+</section>
+
+<section class="panel" id="order">
+    <h2>Healthy Meal Order</h2>
+    <p class="lead">Pick quantities and place the order; the bill is calculated with jQuery.</p>
+    <div class="menu">
+        <div class="item"><div class="swatch" style="background:linear-gradient(135deg,#6cc070,#2c7a3f)"></div>Green Detox Juice &ndash; Rs. 300</div>
+        <div class="item"><div class="swatch" style="background:linear-gradient(135deg,#e9b77a,#a8672a)"></div>Protein Smoothie &ndash; Rs. 200</div>
+        <div class="item"><div class="swatch" style="background:linear-gradient(135deg,#f4e3b5,#d9b45f)"></div>Oats &amp; Berry Bowl &ndash; Rs. 250</div>
+        <div class="item"><div class="swatch" style="background:linear-gradient(135deg,#ff9d6c,#d94a4a)"></div>Fruit Salad &ndash; Rs. 350</div>
+    </div>
+    <div class="order-row">
+        <label for="q1">Green Detox Juice (Quantity)</label><input type="number" id="q1" min="0" value="2">
+        <label for="q2">Protein Smoothie (Quantity)</label><input type="number" id="q2" min="0" value="1">
+        <label for="q3">Oats &amp; Berry Bowl (Quantity)</label><input type="number" id="q3" min="0" value="2">
+        <label for="q4">Fruit Salad (Quantity)</label><input type="number" id="q4" min="0" value="1">
+    </div>
+    <button class="btn" id="place">Place Order</button>
+    <p class="error" id="orderErr" role="alert"></p>
+    <div class="bill" id="bill">
+        <h3>Purchase Order Bill</h3>
+        <table><thead><tr><th>Item</th><th>Qty</th><th>Amount</th></tr></thead><tbody id="billRows"></tbody></table>
+        <span class="total">Total Price</span><span id="totalPrice"></span>
+    </div>
+</section>
+
+<section class="panel" id="van">
+    <h2>Wellness Van Workshop</h2>
+    <p class="lead">Customise the mobile clinic van: body colour, glass tint and tyre size.</p>
+    <div class="garage">
+        <div id="car">
+            <div id="cabin"></div><div id="glass"></div><div id="body"></div>
+            <div class="tyre" id="t-back"></div><div class="tyre" id="t-front"></div>
+        </div>
+    </div>
+    <p><b>Body colour</b></p>
+    <div class="swatches" id="bodySwatches" style="margin:8px 0 14px">
+        <button style="background:#e07a3f" data-c="#e07a3f" aria-label="Orange"></button>
+        <button style="background:#2c7a3f" data-c="#2c7a3f" aria-label="Green"></button>
+        <button style="background:#1f4e8c" data-c="#1f4e8c" aria-label="Blue"></button>
+        <button style="background:#a12b1a" data-c="#a12b1a" aria-label="Red"></button>
+        <button style="background:#f2f2f2" data-c="#f2f2f2" aria-label="White"></button>
+    </div>
+    <button class="btn alt" id="tint">Change Glass Tint</button>
+    <button class="btn alt" id="tyreUp">Tyre Size Increase</button>
+    <button class="btn alt" id="tyreDown">Tyre Size Decrease</button>
+    <button class="btn alt" id="reset">Reset</button>
+    <p class="error" id="vanMsg" role="status" style="color:var(--leaf)"></p>
+</section>
+
+</main>
+<footer>Vitality Now &middot; Web Technology Lab &middot; Ex. 7 jQuery</footer>
+
+<script>
+$(document).ready(function () {
+
+    // Tabs: hide all panels, fade in the chosen one
+    $(".tabs button").click(function () {
+        $(".tabs button").removeClass("active");
+        $(this).addClass("active");
+        $(".panel").hide();
+        $("#" + $(this).data("tab")).fadeIn(250);
+    });
+
+    // 1. Calorie adder (sample program)
+    $("#btn").click(function () {
+        var n1 = parseInt($("#t1").val());
+        var n2 = parseInt($("#t2").val());
+        if (isNaN(n1) || isNaN(n2)) {
+            $("#addErr").text("Enter a whole number in both fields.");
+            $("#box").hide();
+            return;
+        }
+        $("#addErr").text("");
+        var sum = n1 + n2;
+        $("#result").val(sum);
+        $("#box").html("Result: " + sum + " kcal").slideDown(200);
+    });
+
+    // 2. Budget calculator
+    $("#evaluate").click(function () {
+        var amount = parseFloat($("#amount").val());
+        var p = [1, 2, 3, 4].map(function (i) { return parseFloat($("#p" + i).val()); });
+        $(".share").hide();
+        $("#budgetErr").text("");
+        if (isNaN(amount) || amount <= 0 || p.some(isNaN)) {
+            $("#budgetErr").text("Enter a positive amount and all four percentages.");
+            alert("Enter a positive amount and all four percentages.");
+            return;
+        }
+        var total = p.reduce(function (a, b) { return a + b; }, 0);
+        if (Math.abs(total - 100) > 0.001) {
+            var msg = "The amount cannot be divided: percentages add up to " + total + "%, not 100%.";
+            $("#budgetErr").text(msg);
+            alert(msg);
+            return;
+        }
+        p.forEach(function (pc, i) {
+            $("#v" + (i + 1)).text("Rs. " + (amount * pc / 100).toFixed(0));
+        });
+        $(".share").fadeIn(300);
+    });
+
+    // 3. Meal order
+    var menu = [
+        { name: "Green Detox Juice", price: 300 },
+        { name: "Protein Smoothie", price: 200 },
+        { name: "Oats & Berry Bowl", price: 250 },
+        { name: "Fruit Salad", price: 350 }
+    ];
+    $("#place").click(function () {
+        var total = 0, rows = "";
+        $("#orderErr").text("");
+        for (var i = 0; i < menu.length; i++) {
+            var q = parseInt($("#q" + (i + 1)).val());
+            if (isNaN(q) || q < 0) {
+                $("#orderErr").text("Quantities must be zero or more.");
+                $("#bill").hide();
+                return;
+            }
+            if (q > 0) {
+                rows += "<tr><td>" + menu[i].name.replace("&", "&amp;") + "</td><td>" + q + "</td><td>Rs. " + q * menu[i].price + "</td></tr>";
+                total += q * menu[i].price;
+            }
+        }
+        if (total === 0) {
+            $("#orderErr").text("Add at least one item to place an order.");
+            $("#bill").hide();
+            return;
+        }
+        $("#billRows").html(rows);
+        $("#totalPrice").text("Rs." + total);
+        $("#bill").slideDown(250);
+    });
+
+    // 4. Van workshop
+    var tyre = 54, defaults = { body: "#e07a3f", glass: "rgba(190,230,255,.85)" };
+    var tints = [defaults.glass, "rgba(90,130,160,.9)", "rgba(30,45,60,.95)"], tintIdx = 0;
+    function setTyre() {
+        $(".tyre").animate({ width: tyre, height: tyre }, 150);
+        $("#vanMsg").text("Tyre size: " + tyre + " px");
+    }
+    $("#bodySwatches button").click(function () {
+        var c = $(this).data("c");
+        $("#body, #cabin").css("background", c);
+        $("#vanMsg").text("Body colour set to " + c);
+    });
+    $("#tint").click(function () {
+        tintIdx = (tintIdx + 1) % tints.length;
+        $("#glass").css("background", tints[tintIdx]);
+        $("#vanMsg").text(["Clear glass", "Light tint", "Dark tint"][tintIdx]);
+    });
+    $("#tyreUp").click(function () { if (tyre < 74) { tyre += 10; setTyre(); } else $("#vanMsg").text("Maximum tyre size reached"); });
+    $("#tyreDown").click(function () { if (tyre > 34) { tyre -= 10; setTyre(); } else $("#vanMsg").text("Minimum tyre size reached"); });
+    $("#reset").click(function () {
+        tyre = 54; tintIdx = 0;
+        $("#body, #cabin").css("background", defaults.body);
+        $("#glass").css("background", defaults.glass);
+        setTyre();
+        $("#vanMsg").text("Van reset to the original design");
+    });
+});
+</script>
+</body>
+</html>
